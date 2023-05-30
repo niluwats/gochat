@@ -36,7 +36,7 @@ func Deserialize(res any) []Document {
 			return docs
 		}
 	default:
-		log.Println("different response type other than []any. type: %T", res)
+		log.Printf("different response type other than []any. type: %T", res)
 		return nil
 	}
 	return nil
