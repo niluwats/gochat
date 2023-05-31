@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -10,6 +11,7 @@ import (
 )
 
 func StartHTTPServer() {
+	log.Println("http server")
 	redisClient := redisrepo.InitializeRedis()
 	defer redisClient.Close()
 
