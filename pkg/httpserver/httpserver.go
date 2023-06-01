@@ -17,17 +17,24 @@ func StartHTTPServer() {
 
 	redisrepo.CreateFetchChatBetweenIndex()
 
-	r := mux.NewRouter()
-	r.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
+	router := mux.NewRouter()
+	router.HandleFunc("/status", func(w http.ResponseWriter, router *http.Request) {
 		fmt.Fprintf(w, "Simple server")
 	}).Methods(http.MethodGet)
 
-	r.HandleFunc("/register", registerHandler).Methods(http.MethodPost)
-	r.HandleFunc("/login", loginHandler).Methods(http.MethodPost)
-	r.HandleFunc("/verify-contact", verifyContactHandler).Methods(http.MethodPost)
-	r.HandleFunc("/chat-history", chatHistoryHandler).Methods(http.MethodGet)
-	r.HandleFunc("/contact-list", contactListHandler).Methods(http.MethodGet)
+	router.HandleFunc("/register", registerHandler).Methods(http.MethodPost)
+	router.HandleFunc("/login", loginHandler).Methods(http.MethodPost)
+	router.HandleFunc("/verify-contact", verifyContactHandler).Methods(http.MethodPost)
+	router.HandleFunc("/chat-history", chatHistoryHandler).Methods(http.MethodGet)
+	router.HandleFunc("/contact-list", contactListHandler).Methods(http.MethodGet)
 
-	handler := cors.Default().Handler(r)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedHeaders:   []string{"Content-Type"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(router)
+
 	http.ListenAndServe(":8080", handler)
 }
