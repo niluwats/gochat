@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -17,7 +16,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	client := &Client{Conn: ws}
 	clients[client] = true
 
-	fmt.Println("clients ", len(clients), clients, ws.RemoteAddr())
+	log.Println("clients ", len(clients), clients, ws.RemoteAddr())
 
 	receiver(client)
 	println("existing", ws.RemoteAddr().String())

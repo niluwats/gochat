@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/niluwats/gochat/pkg/dto"
@@ -18,6 +19,8 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(u)
+
 	res := service.Register(u)
 	json.NewEncoder(w).Encode(res)
 }
@@ -30,6 +33,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error decoding request object", http.StatusBadRequest)
 		return
 	}
+	log.Println(u)
 
 	res := service.Login(u)
 	json.NewEncoder(w).Encode(res)

@@ -7,7 +7,8 @@ import (
 
 func Register(u *dto.UserReq) *dto.Response {
 	res := &dto.Response{
-		Status: true,
+		Status:  true,
+		Message: "signup successful",
 	}
 
 	status := redisrepo.IsUserExists(u.Username)
@@ -28,7 +29,7 @@ func Register(u *dto.UserReq) *dto.Response {
 }
 
 func Login(u *dto.UserReq) *dto.Response {
-	res := &dto.Response{Status: true}
+	res := &dto.Response{Status: true, Message: "login successful"}
 
 	err := redisrepo.IsUserAuthenticated(u.Username, u.Password)
 	if err != nil {
