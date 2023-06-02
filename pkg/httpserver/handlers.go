@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/niluwats/gochat/pkg/dto"
+	"github.com/niluwats/gochat/pkg/middleware"
 	"github.com/niluwats/gochat/pkg/service"
 )
 
@@ -33,13 +34,24 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error decoding request object", http.StatusBadRequest)
 		return
 	}
-	log.Println(u)
 
 	res := service.Login(u)
+	if res.Status {
+		token, err := middleware.GenerateJWT(u.Username)
+		if err != nil {
+			res.Message = err.Error()
+			res.Status = false
+		}
+		res.Data = token
+	}
 	json.NewEncoder(w).Encode(res)
 }
 
 func verifyContactHandler(w http.ResponseWriter, r *http.Request) {
+	if middleware.VerifyJWT(w, r) != nil {
+		json.NewEncoder(w).Encode(dto.Response{Status: false, Message: "unauthorized"})
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 
 	u := &dto.UserReq{}
@@ -53,6 +65,11 @@ func verifyContactHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func chatHistoryHandler(w http.ResponseWriter, r *http.Request) {
+	if middleware.VerifyJWT(w, r) != nil {
+		json.NewEncoder(w).Encode(dto.Response{Status: false, Message: "unauthorized"})
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	u1 := r.URL.Query().Get("u1")
 	u2 := r.URL.Query().Get("u2")
@@ -69,6 +86,11 @@ func chatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func contactListHandler(w http.ResponseWriter, r *http.Request) {
+	if middleware.VerifyJWT(w, r) != nil {
+		json.NewEncoder(w).Encode(dto.Response{Status: false, Message: "unauthorized"})
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 
 	u := r.URL.Query().Get("username")

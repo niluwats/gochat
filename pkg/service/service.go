@@ -1,6 +1,8 @@
 package service
 
 import (
+	"log"
+
 	"github.com/niluwats/gochat/pkg/dto"
 	"github.com/niluwats/gochat/pkg/redisrepo"
 )
@@ -42,8 +44,12 @@ func Login(u *dto.UserReq) *dto.Response {
 }
 
 func VerifyContact(username string) *dto.Response {
-	res := &dto.Response{Status: true}
+	res := &dto.Response{Status: true, Message: "contact added"}
 	status := redisrepo.IsUserExists(username)
+
+	log.Println(username)
+	log.Println(status)
+
 	if !status {
 		res.Status = false
 		res.Message = "invalid username"

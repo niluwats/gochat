@@ -10,4 +10,5 @@ services:
     environment:
       - REDIS_CONNECTION_STRING=redis-14486.c14.us-east-1-2.ec2.cloud.redislabs.com:14486
       - REDIS_PASSWORD=wp5e8hZbIfMCOf4p8fEJdcTPGMFNeNH6
+      - JWT_SECRET=mysecret123HZSA
 
