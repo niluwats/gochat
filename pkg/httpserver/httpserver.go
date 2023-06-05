@@ -1,7 +1,6 @@
 package httpserver
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -18,23 +17,20 @@ func StartHTTPServer() {
 	redisrepo.CreateFetchChatBetweenIndex()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/status", func(w http.ResponseWriter, router *http.Request) {
-		fmt.Fprintf(w, "Simple server")
-	}).Methods(http.MethodGet)
 
 	router.HandleFunc("/register", registerHandler).Methods(http.MethodPost)
 	router.HandleFunc("/login", loginHandler).Methods(http.MethodPost)
-	router.HandleFunc("/verify-contact", verifyContactHandler).Methods(http.MethodPost)
-	router.HandleFunc("/chat-history", chatHistoryHandler).Methods(http.MethodGet)
-	router.HandleFunc("/contact-list", contactListHandler).Methods(http.MethodGet)
+	router.HandleFunc("/verifycontact", verifyContactHandler).Methods(http.MethodPost)
+	router.HandleFunc("/chathistory", chatHistoryHandler).Methods(http.MethodGet)
+	router.HandleFunc("/contactlist", contactListHandler).Methods(http.MethodGet)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
-		AllowedHeaders:   []string{"Content-Type"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodDelete},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
 	})
 
 	handler := c.Handler(router)
-
 	http.ListenAndServe(":8080", handler)
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -37,18 +38,46 @@ func GenerateJWT(username string) (string, error) {
 }
 
 func VerifyJWT(w http.ResponseWriter, r *http.Request) error {
-	if r.Header["Token"] == nil {
-		return errors.New("cannot find token in header")
+	tokenString, err := extractToken(r)
+	if err != nil {
+		return err
 	}
 
-	token, err := jwt.ParseWithClaims(r.Header["Token"][0], &Claims{}, func(token *jwt.Token) (any, error) {
+	token, err := parseToken(tokenString)
+	if err != nil {
+		return err
+	}
+
+	err = verifyClaims(token)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func extractToken(r *http.Request) (string, error) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		return "", errors.New("cannot find token in header")
+	}
+	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
+	return tokenString, nil
+}
+
+func parseToken(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (any, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 
 	if err != nil {
-		return errors.New("token parsing error")
+		return nil, errors.New("token parsing error")
 	}
 
+	return token, nil
+}
+
+func verifyClaims(token *jwt.Token) error {
 	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
 		return errors.New("token not valid")

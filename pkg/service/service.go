@@ -1,8 +1,6 @@
 package service
 
 import (
-	"log"
-
 	"github.com/niluwats/gochat/pkg/dto"
 	"github.com/niluwats/gochat/pkg/redisrepo"
 )
@@ -44,22 +42,18 @@ func Login(u *dto.UserReq) *dto.Response {
 }
 
 func VerifyContact(username string) *dto.Response {
-	res := &dto.Response{Status: true, Message: "contact added"}
-	status := redisrepo.IsUserExists(username)
-
-	log.Println(username)
-	log.Println(status)
-
-	if !status {
+	res := &dto.Response{Status: true, Message: "contact exists"}
+	if !redisrepo.IsUserExists(username) {
 		res.Status = false
 		res.Message = "invalid username"
 		return res
 	}
+
 	return res
 }
 
 func ChatHistory(username1, username2, fromTs, toTs string) *dto.Response {
-	res := &dto.Response{}
+	res := &dto.Response{Message: "success"}
 	if !redisrepo.IsUserExists(username1) || !redisrepo.IsUserExists(username2) {
 		res.Message = "incorrect username"
 		return res
@@ -77,10 +71,10 @@ func ChatHistory(username1, username2, fromTs, toTs string) *dto.Response {
 }
 
 func ContactList(username string) *dto.Response {
-	res := &dto.Response{}
+	res := &dto.Response{Message: "success"}
 
 	if !redisrepo.IsUserExists(username) {
-		res.Message = "incorrect username"
+		res.Message = "invalid username"
 		return res
 	}
 
