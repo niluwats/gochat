@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	go httpserver.StartHTTPServer()
 	go ws.StartWebSocketServer()
+	go httpserver.StartHTTPServer()
 	select {}
 }
