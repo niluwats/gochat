@@ -8,13 +8,17 @@ import (
 )
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
+	log.Println("serveWs called")
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Println("error upgrading to tcp ", err)
 	}
 
 	client := &Client{Conn: ws}
 	clients[client] = true
+
+	w.Header().Set("Access-Control-Allow-Headers", "Authorization")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 
 	log.Println("clients ", len(clients), clients, ws.RemoteAddr())
 
@@ -23,16 +27,13 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	delete(clients, client)
 }
 
-func setupRoutes() {
-	http.HandleFunc("/ws", serveWs)
-}
-
 func StartWebSocketServer() {
 	log.Println("websocket server")
 	redisClient := redisrepo.InitializeRedis()
 	defer redisClient.Close()
 
+	http.HandleFunc("/ws", serveWs)
+
 	go broadcaster()
-	setupRoutes()
 	http.ListenAndServe(":8081", nil)
 }
