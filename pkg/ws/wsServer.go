@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -8,7 +9,6 @@ import (
 )
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
-	log.Println("serveWs called")
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("error upgrading to tcp ", err)
@@ -32,6 +32,9 @@ func StartWebSocketServer() {
 	redisClient := redisrepo.InitializeRedis()
 	defer redisClient.Close()
 
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "GOCHAT websocket server")
+	})
 	http.HandleFunc("/ws", serveWs)
 
 	go broadcaster()

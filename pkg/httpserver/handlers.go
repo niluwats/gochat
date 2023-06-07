@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,6 +10,10 @@ import (
 	"github.com/niluwats/gochat/pkg/middleware"
 	"github.com/niluwats/gochat/pkg/service"
 )
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "GOCHAT http server")
+}
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -49,7 +54,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func verifyContactHandler(w http.ResponseWriter, r *http.Request) {
 	if middleware.VerifyJWT(w, r) != nil {
-		json.NewEncoder(w).Encode(dto.Response{Status: false, Message: "unauthorized"})
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -66,7 +71,7 @@ func verifyContactHandler(w http.ResponseWriter, r *http.Request) {
 
 func chatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	if middleware.VerifyJWT(w, r) != nil {
-		json.NewEncoder(w).Encode(dto.Response{Status: false, Message: "unauthorized"})
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -87,7 +92,7 @@ func chatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
 func contactListHandler(w http.ResponseWriter, r *http.Request) {
 	if middleware.VerifyJWT(w, r) != nil {
-		json.NewEncoder(w).Encode(dto.Response{Status: false, Message: "unauthorized"})
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 

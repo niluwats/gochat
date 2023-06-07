@@ -18,6 +18,7 @@ func StartHTTPServer() {
 
 	router := mux.NewRouter()
 
+	router.HandleFunc("/", rootHandler).Methods(http.MethodGet)
 	router.HandleFunc("/register", registerHandler).Methods(http.MethodPost)
 	router.HandleFunc("/login", loginHandler).Methods(http.MethodPost)
 	router.HandleFunc("/verifycontact", verifyContactHandler).Methods(http.MethodPost)

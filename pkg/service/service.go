@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/niluwats/gochat/pkg/dto"
 	"github.com/niluwats/gochat/pkg/redisrepo"
 )
@@ -64,6 +66,8 @@ func ChatHistory(username1, username2, fromTs, toTs string) *dto.Response {
 		res.Message = "unable to fetch history " + err.Error()
 		return res
 	}
+
+	fmt.Println(chats)
 	res.Status = true
 	res.Data = chats
 	res.Total = len(chats)

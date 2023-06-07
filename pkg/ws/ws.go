@@ -52,13 +52,13 @@ func receiver(client *Client) {
 			return
 		}
 
-		fmt.Println("host ", client.Conn.RemoteAddr())
+		fmt.Println("HOST ", client.Conn.RemoteAddr())
 
 		if m.Type == "bootup" {
 			client.Username = m.User
-			fmt.Println("client successfully mapped ", client.Username)
+			log.Println("client successfully mapped ", client.Username)
 		} else {
-			fmt.Println("ercevied chat messaaaage", m.Type, m.Chat)
+			log.Println("recevied chat message", m.Type, m.Chat)
 
 			chat := m.Chat
 			chat.Timestamp = time.Now().Unix()
